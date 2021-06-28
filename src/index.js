@@ -1,23 +1,24 @@
-/* eslint-disable no-param-reassign */
 /* eslint-disable no-restricted-syntax */
-/* eslint-disable no-unused-expressions */
-/* eslint-disable guard-for-in */
-export default function orderByProps(object, [...props]) {
+export default function orderByProps(object, values) {
   const orderedObj = [];
-  for (const property in object) {
-    props.forEach((prop) => {
-      if (prop === property) {
-        orderedObj.push({ key: `${property}`, value: `${object[property]}` });
-        delete object[property] === prop;
+  const notInValues = [];
+  for (const key in object) {
+    // instead of object.hasOwnProperty(key)
+    if (Object.prototype.hasOwnProperty.call(object, key)) {
+      const obj = {
+        key,
+        value: object[key],
+      };
+
+      if (values.indexOf(key) !== -1) {
+        orderedObj[values.indexOf(key)] = obj;
+      } else {
+        notInValues.push(obj);
       }
-    });
+    }
   }
 
-  const orderedAlph = [];
-  Object.keys(object).sort().reduce(
-    (_obj, key) => (orderedAlph.push({ key: `${key}`, value: `${object[key]}` })),
-    {},
-  );
+  const orderedAlph = notInValues.sort((a, b) => a.key.localeCompare(b.key));
 
   return orderedObj.concat(orderedAlph);
 }
